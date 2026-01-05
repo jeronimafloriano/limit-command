@@ -18,6 +18,22 @@ public class Limit {
     this.availableLimit = availableLimit;
   }
 
+  public UUID getAccountId() {
+    return accountId;
+  }
+
+  public BigDecimal getTotalLimit() {
+    return totalLimit;
+  }
+
+  public BigDecimal getReservedLimit() {
+    return reservedLimit;
+  }
+
+  public BigDecimal getAvailableLimit() {
+    return availableLimit;
+  }
+
   public void reserve(BigDecimal amount) {
       if (isAvailable(amount)) {
         this.reservedLimit = this.reservedLimit.add(amount);
