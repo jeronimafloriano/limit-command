@@ -21,6 +21,7 @@ public enum Messages implements ValidationMessage {
   }
 
   @Override
+  @Override
   public final String getMessage() {
     return message;
   }
