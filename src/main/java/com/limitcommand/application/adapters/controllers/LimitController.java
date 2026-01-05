@@ -4,6 +4,8 @@ import com.limitcommand.application.dtos.LimitRequestDTO;
 import com.limitcommand.application.dtos.LimitResponseDTO;
 import com.limitcommand.application.mappers.LimitMapper;
 import com.limitcommand.domain.port.LimiteServicePort;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
@@ -46,15 +48,15 @@ public class LimitController {
   @PostMapping("/{accountId}/reserve")
   public ResponseEntity<Void> reserve(
       @PathVariable UUID accountId,
-      @RequestBody LimitRequestDTO requestDTO) {
+      @Valid @RequestBody LimitRequestDTO requestDTO) {
     limiteServicePort.reserve(accountId, requestDTO.getAmount());
-    return ResponseEntity.status(HttpStatus.CREATED).build();
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @PostMapping("/{accountId}/release")
   public ResponseEntity<Void> release(
       @PathVariable UUID accountId,
-      @RequestBody LimitRequestDTO requestDTO) {
+      @Valid @RequestBody LimitRequestDTO requestDTO) {
     limiteServicePort.release(accountId, requestDTO.getAmount());
     return ResponseEntity.ok().build();
   }
@@ -62,7 +64,7 @@ public class LimitController {
   @PostMapping("/{accountId}/adjustment")
   public ResponseEntity<Void> adjustment(
       @PathVariable UUID accountId,
-      @RequestBody LimitRequestDTO requestDTO) {
+      @Valid @RequestBody LimitRequestDTO requestDTO) {
     limiteServicePort.applyAdjustment(accountId, requestDTO.getAmount());
     return ResponseEntity.ok().build();
   }
