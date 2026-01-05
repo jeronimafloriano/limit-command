@@ -40,7 +40,7 @@ public class LimitController {
 
   @GetMapping("/{accountId}/availability")
   public ResponseEntity<Boolean> consultAvailability(
-      @PathVariable UUID accountId, @RequestParam BigDecimal amount) {
+      @PathVariable UUID accountId, @Valid @RequestParam BigDecimal amount) {
     boolean isAvailable = limiteServicePort.consultAvailability(accountId, amount);
     return ResponseEntity.ok(isAvailable);
   }
@@ -50,7 +50,7 @@ public class LimitController {
       @PathVariable UUID accountId,
       @Valid @RequestBody LimitRequestDTO requestDTO) {
     limiteServicePort.reserve(accountId, requestDTO.getAmount());
-    return ResponseEntity.status(HttpStatus.OK).build();
+    return ResponseEntity.noContent().build();
   }
 
   @PostMapping("/{accountId}/release")
@@ -58,7 +58,7 @@ public class LimitController {
       @PathVariable UUID accountId,
       @Valid @RequestBody LimitRequestDTO requestDTO) {
     limiteServicePort.release(accountId, requestDTO.getAmount());
-    return ResponseEntity.ok().build();
+    return ResponseEntity.noContent().build();
   }
 
   @PostMapping("/{accountId}/adjustment")
@@ -66,6 +66,6 @@ public class LimitController {
       @PathVariable UUID accountId,
       @Valid @RequestBody LimitRequestDTO requestDTO) {
     limiteServicePort.applyAdjustment(accountId, requestDTO.getAmount());
-    return ResponseEntity.ok().build();
+    return ResponseEntity.noContent().build();
   }
 }
