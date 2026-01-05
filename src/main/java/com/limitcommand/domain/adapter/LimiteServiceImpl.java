@@ -22,7 +22,7 @@ public class LimiteServiceImpl implements LimiteServicePort {
 
   @Override
   public Optional<Limit> consult(UUID accountId) {
-
+    ArgumentValidations.isNotNull(accountId, Messages.REQUIRED_ID);
     return this.limiteRepositoryPort.findByAccountId(accountId);
   }
 
