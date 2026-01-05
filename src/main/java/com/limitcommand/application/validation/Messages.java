@@ -15,10 +15,12 @@ public enum Messages implements ValidationMessage {
   private final String code;
   private final String message;
 
+  @Override
   public String getCode() {
     return code;
   }
 
+  @Override
   public final String getMessage() {
     return message;
   }
