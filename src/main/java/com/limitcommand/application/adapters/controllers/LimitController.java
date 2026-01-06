@@ -3,9 +3,9 @@ package com.limitcommand.application.adapters.controllers;
 import com.limitcommand.application.dtos.LimitRequestDTO;
 import com.limitcommand.application.dtos.LimitResponseDTO;
 import com.limitcommand.application.mappers.LimitMapper;
-import com.limitcommand.domain.port.LimiteServicePort;
+import com.limitcommand.domain.Limit;
+import com.limitcommand.domain.port.LimitServicePort;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
@@ -22,50 +22,43 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/limits")
 public class LimitController {
 
-  private final LimiteServicePort limiteServicePort;
-  private final LimitMapper limitMapper;
+    private final LimitServicePort limitServicePort;
+    private final LimitMapper limitMapper;
 
-  public LimitController(LimiteServicePort limiteServicePort, LimitMapper limitMapper) {
-    this.limiteServicePort = limiteServicePort;
-    this.limitMapper = limitMapper;
-  }
+    public LimitController(LimitServicePort limitServicePort, LimitMapper limitMapper) {
+        this.limitServicePort = limitServicePort;
+        this.limitMapper = limitMapper;
+    }
 
-  @GetMapping("/{accountId}")
-  public ResponseEntity<LimitResponseDTO> consult(@PathVariable UUID accountId) {
-    return limiteServicePort.consult(accountId)
-        .map(limitMapper::toDTO)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
-  }
+    @GetMapping("/{accountId}")
+    public ResponseEntity<LimitResponseDTO> consult(@PathVariable UUID accountId) {
+        Limit limit = limitServicePort.consult(accountId);
+        return ResponseEntity.status(HttpStatus.OK).body(limitMapper.toDTO(limit));
+    }
 
-  @GetMapping("/{accountId}/availability")
-  public ResponseEntity<Boolean> consultAvailability(
-      @PathVariable UUID accountId, @Valid @RequestParam BigDecimal amount) {
-    boolean isAvailable = limiteServicePort.consultAvailability(accountId, amount);
-    return ResponseEntity.ok(isAvailable);
-  }
+    @GetMapping("/{accountId}/availability")
+    public ResponseEntity<Boolean> consultAvailability(
+            @PathVariable UUID accountId, @Valid @RequestParam BigDecimal amount) {
+        boolean isAvailable = limitServicePort.consultAvailability(accountId, amount);
+        return ResponseEntity.ok(isAvailable);
+    }
 
-  @PostMapping("/{accountId}/reserve")
-  public ResponseEntity<Void> reserve(
-      @PathVariable UUID accountId,
-      @Valid @RequestBody LimitRequestDTO requestDTO) {
-    limiteServicePort.reserve(accountId, requestDTO.getAmount());
-    return ResponseEntity.noContent().build();
-  }
+    @PostMapping("/{accountId}/reserve")
+    public ResponseEntity<Void> reserve(@PathVariable UUID accountId, @Valid @RequestBody LimitRequestDTO requestDTO) {
+        limitServicePort.reserve(accountId, requestDTO.getAmount());
+        return ResponseEntity.noContent().build();
+    }
 
-  @PostMapping("/{accountId}/release")
-  public ResponseEntity<Void> release(
-      @PathVariable UUID accountId,
-      @Valid @RequestBody LimitRequestDTO requestDTO) {
-    limiteServicePort.release(accountId, requestDTO.getAmount());
-    return ResponseEntity.noContent().build();
-  }
+    @PostMapping("/{accountId}/release")
+    public ResponseEntity<Void> release(@PathVariable UUID accountId, @Valid @RequestBody LimitRequestDTO requestDTO) {
+        limitServicePort.release(accountId, requestDTO.getAmount());
+        return ResponseEntity.noContent().build();
+    }
 
-  @PostMapping("/{accountId}/adjustment")
-  public ResponseEntity<Void> adjustment(
-      @PathVariable UUID accountId,
-      @Valid @RequestBody LimitRequestDTO requestDTO) {
-    limiteServicePort.applyAdjustment(accountId, requestDTO.getAmount());
-    return ResponseEntity.noContent().build();
-  }
+    @PostMapping("/{accountId}/adjustment")
+    public ResponseEntity<Void> adjustment(
+            @PathVariable UUID accountId, @Valid @RequestBody LimitRequestDTO requestDTO) {
+        limitServicePort.applyAdjustment(accountId, requestDTO.getAmount());
+        return ResponseEntity.noContent().build();
+    }
 }

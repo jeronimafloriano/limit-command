@@ -14,13 +14,12 @@ import java.util.UUID;
  */
 public class LimitNotFoundException extends RuntimeException {
 
-  /**
-   * Creates a new exception indicating that no limit was found for the given account.
-   *
-   * @param accountId the identifier of the account for which a limit was expected
-   */
-  public LimitNotFoundException(UUID accountId) {
-    super("Limit not found for accountId: " + accountId);
-  }
+    /**
+     * Creates a new exception indicating that no limit was found for the given account.
+     *
+     * @param accountId the identifier of the account for which a limit was expected
+     */
+    public LimitNotFoundException(UUID accountId) {
+        super("Limit not found for accountId: " + accountId);
+    }
 }
-
