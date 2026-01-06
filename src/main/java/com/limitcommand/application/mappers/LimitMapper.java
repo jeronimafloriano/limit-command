@@ -7,15 +7,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class LimitMapper {
 
-  public LimitResponseDTO toDTO(Limit limit) {
-    if (limit == null) {
-      return null;
+    public LimitResponseDTO toDTO(Limit limit) {
+        if (limit == null) {
+            return null;
+        }
+        return new LimitResponseDTO(
+                limit.getAccountId(), limit.getTotalLimit(), limit.getReservedLimit(), limit.getAvailableLimit());
     }
-    return new LimitResponseDTO(
-        limit.getAccountId(),
-        limit.getTotalLimit(),
-        limit.getReservedLimit(),
-        limit.getAvailableLimit()
-    );
-  }
 }
