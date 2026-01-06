@@ -5,5 +5,5 @@ package com.limitcommand.infrastructure.events.publisher;
  */
 public interface UsageLimitEventPublisherPort {
 
-    void publishUseLimitUpdated(LimitUsageUpdatedEvent event);
+    void publishLimitUsageUpdated(LimitUsageUpdatedEvent event);
 }

@@ -7,6 +7,7 @@ import com.limitcommand.infrastructure.adapters.SpringLimitRepository;
 import com.limitcommand.infrastructure.adapters.entity.LimitEntity;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class LimitRepository implements LimitRepositoryPort {
@@ -17,6 +18,7 @@ public class LimitRepository implements LimitRepositoryPort {
         this.springLimitRepository = springLimitRepository;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Limit findByAccountId(UUID accountId) {
         return this.springLimitRepository
@@ -25,6 +27,7 @@ public class LimitRepository implements LimitRepositoryPort {
                 .orElseThrow(() -> new LimitNotFoundException(accountId));
     }
 
+    @Transactional
     @Override
     public void save(Limit limit) {
         LimitEntity limitEntity =

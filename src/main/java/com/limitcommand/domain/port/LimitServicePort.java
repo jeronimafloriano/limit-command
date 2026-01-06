@@ -13,5 +13,5 @@ public interface LimitServicePort {
 
     void release(UUID accountId, BigDecimal amount);
 
-    void applyAdjustment(UUID accountId, BigDecimal amount);
+    void applyAdjustment(UUID accountId, BigDecimal amountAdd);
 }

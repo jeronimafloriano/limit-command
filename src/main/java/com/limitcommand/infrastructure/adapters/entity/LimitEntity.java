@@ -1,6 +1,7 @@
 package com.limitcommand.infrastructure.adapters.entity;
 
 import com.limitcommand.domain.Limit;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -12,10 +13,16 @@ import java.util.UUID;
 public class LimitEntity {
 
     @Id
+    @Column(name = "account_id")
     private UUID accountId;
 
+    @Column(name = "total_limit")
     private BigDecimal totalLimit;
+
+    @Column(name = "reserved_limit")
     private BigDecimal reservedLimit;
+
+    @Column(name = "available_limit")
     private BigDecimal availableLimit;
 
     public LimitEntity() {}
@@ -28,7 +35,6 @@ public class LimitEntity {
     }
 
     public void updateFromDomain(Limit limit) {
-        this.accountId = limit.getAccountId();
         this.totalLimit = limit.getTotalLimit();
         this.reservedLimit = limit.getReservedLimit();
         this.availableLimit = limit.getAvailableLimit();

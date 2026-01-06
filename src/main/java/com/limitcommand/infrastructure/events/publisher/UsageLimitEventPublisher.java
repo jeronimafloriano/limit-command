@@ -13,7 +13,7 @@ public class UsageLimitEventPublisher implements UsageLimitEventPublisherPort {
     }
 
     @Override
-    public void publishUseLimitUpdated(LimitUsageUpdatedEvent event) {
+    public void publishLimitUsageUpdated(LimitUsageUpdatedEvent event) {
         rabbitTemplate.convertAndSend("limitUsageExchange", "limit.usage.updated", event);
     }
 }

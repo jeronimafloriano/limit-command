@@ -34,10 +34,11 @@ public class Limit {
     }
 
     public void reserve(BigDecimal amount) {
-        if (isAvailable(amount)) {
-            this.reservedLimit = this.reservedLimit.add(amount);
-            this.availableLimit = this.availableLimit.subtract(amount);
+        if (!isAvailable(amount)) {
+            throw new IllegalArgumentException("Insufficient available limit to reserve amount: " + amount);
         }
+        this.reservedLimit = this.reservedLimit.add(amount);
+        this.availableLimit = this.availableLimit.subtract(amount);
     }
 
     public void release(BigDecimal amount) {
@@ -45,8 +46,9 @@ public class Limit {
         this.availableLimit = this.availableLimit.add(amount);
     }
 
-    public void applyAdjustment(BigDecimal newTotalLimit) {
-        this.totalLimit = this.totalLimit.add(newTotalLimit);
+    public void applyAdjustment(BigDecimal amountAdd) {
+        this.totalLimit = this.totalLimit.add(amountAdd);
+        this.availableLimit = this.availableLimit.add(amountAdd);
     }
 
     public boolean isAvailable(BigDecimal amount) {
