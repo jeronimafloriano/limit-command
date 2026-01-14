@@ -1,5 +1,6 @@
 package com.limitcommand.domain.port;
 
+import com.limitcommand.application.dtos.LimitRequestDTO;
 import com.limitcommand.domain.Limit;
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -8,6 +9,8 @@ public interface LimitServicePort {
     Limit consult(UUID accountId);
 
     boolean consultAvailability(UUID accountId, BigDecimal amount);
+
+    Limit create(UUID accountId, LimitRequestDTO requestDTO);
 
     void reserve(UUID accountId, BigDecimal amount);
 

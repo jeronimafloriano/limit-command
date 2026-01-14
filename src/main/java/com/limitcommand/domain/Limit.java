@@ -17,6 +17,13 @@ public class Limit {
         this.availableLimit = availableLimit;
     }
 
+    public Limit(UUID accountId, BigDecimal totalLimit) {
+        this.accountId = accountId;
+        this.totalLimit = totalLimit;
+        this.reservedLimit = BigDecimal.ZERO;
+        this.availableLimit = totalLimit;
+    }
+
     public UUID getAccountId() {
         return accountId;
     }
