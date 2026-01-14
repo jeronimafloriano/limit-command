@@ -4,7 +4,8 @@ import br.com.leverinfo.validation.ValidationMessage;
 
 public enum Messages implements ValidationMessage {
     REQUIRED_ID("0000", "ID is required and cannot be null"),
-    REQUIRED_AMOUNT("0001", "Amount is required and cannot be null");
+    REQUIRED_AMOUNT("0001", "Amount is required and cannot be null"),
+    REQUIRED_LIMIT_DATA("0002", "The limit data is required");
 
     Messages(String code, String message) {
         this.code = code;

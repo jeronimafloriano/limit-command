@@ -1,12 +1,13 @@
 package com.limitcommand.domain.adapter;
 
 import br.com.leverinfo.validation.ArgumentValidations;
+import com.limitcommand.application.dtos.LimitRequestDTO;
 import com.limitcommand.application.validation.Messages;
 import com.limitcommand.domain.Limit;
 import com.limitcommand.domain.port.LimitRepositoryPort;
 import com.limitcommand.domain.port.LimitServicePort;
-import com.limitcommand.infrastructure.events.publisher.LimitUsageUpdatedEvent;
-import com.limitcommand.infrastructure.events.publisher.LimitUsageUpdatedEvent.OperationType;
+import com.limitcommand.infrastructure.events.publisher.LimitEvent;
+import com.limitcommand.infrastructure.events.publisher.LimitEvent.OperationType;
 import com.limitcommand.infrastructure.events.publisher.UsageLimitEventPublisherPort;
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -35,6 +36,18 @@ public class LimitServiceImpl implements LimitServicePort {
         ArgumentValidations.isNotNull(amount, Messages.REQUIRED_AMOUNT);
 
         return this.limitRepositoryPort.findByAccountId(accountId).isAvailable(amount);
+    }
+
+    @Override
+    public Limit create(UUID accountId, LimitRequestDTO requestDTO) {
+        ArgumentValidations.isNotNull(accountId, Messages.REQUIRED_ID);
+        ArgumentValidations.isNotNull(requestDTO, Messages.REQUIRED_LIMIT_DATA);
+
+        Limit limit = new Limit(accountId, requestDTO.getAmount());
+
+        this.limitRepositoryPort.save(limit);
+        this.publishEvent(accountId, limit.getTotalLimit(), OperationType.CREATED);
+        return limit;
     }
 
     @Override
@@ -74,7 +87,7 @@ public class LimitServiceImpl implements LimitServicePort {
     }
 
     private void publishEvent(UUID accountId, BigDecimal amount, OperationType operationType) {
-        LimitUsageUpdatedEvent event = new LimitUsageUpdatedEvent(accountId, amount, operationType);
-        this.eventPublisherPort.publishLimitUsageUpdated(event);
+        LimitEvent event = new LimitEvent(accountId, amount, operationType);
+        this.eventPublisherPort.publishLimitEvent(event);
     }
 }

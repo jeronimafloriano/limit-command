@@ -31,33 +31,42 @@ public class LimitController {
     }
 
     @GetMapping("/{accountId}")
-    public ResponseEntity<LimitResponseDTO> consult(@PathVariable UUID accountId) {
+    public ResponseEntity<LimitResponseDTO> consult(@PathVariable("accountId") UUID accountId) {
         Limit limit = limitServicePort.consult(accountId);
         return ResponseEntity.status(HttpStatus.OK).body(limitMapper.toDTO(limit));
     }
 
     @GetMapping("/{accountId}/availability")
     public ResponseEntity<Boolean> consultAvailability(
-            @PathVariable UUID accountId, @Valid @RequestParam BigDecimal amount) {
+            @PathVariable("accountId") UUID accountId, @Valid @RequestParam BigDecimal amount) {
         boolean isAvailable = limitServicePort.consultAvailability(accountId, amount);
         return ResponseEntity.ok(isAvailable);
     }
 
+    @PostMapping("/{accountId}")
+    public ResponseEntity<LimitResponseDTO> create(
+            @PathVariable("accountId") UUID accountId, @Valid @RequestBody LimitRequestDTO requestDTO) {
+        Limit limit = limitServicePort.create(accountId, requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(limitMapper.toDTO(limit));
+    }
+
     @PostMapping("/{accountId}/reserve")
-    public ResponseEntity<Void> reserve(@PathVariable UUID accountId, @Valid @RequestBody LimitRequestDTO requestDTO) {
+    public ResponseEntity<Void> reserve(
+            @PathVariable("accountId") UUID accountId, @Valid @RequestBody LimitRequestDTO requestDTO) {
         limitServicePort.reserve(accountId, requestDTO.getAmount());
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{accountId}/release")
-    public ResponseEntity<Void> release(@PathVariable UUID accountId, @Valid @RequestBody LimitRequestDTO requestDTO) {
+    public ResponseEntity<Void> release(
+            @PathVariable("accountId") UUID accountId, @Valid @RequestBody LimitRequestDTO requestDTO) {
         limitServicePort.release(accountId, requestDTO.getAmount());
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{accountId}/adjustment")
     public ResponseEntity<Void> adjustment(
-            @PathVariable UUID accountId, @Valid @RequestBody LimitRequestDTO requestDTO) {
+            @PathVariable("accountId") UUID accountId, @Valid @RequestBody LimitRequestDTO requestDTO) {
         limitServicePort.applyAdjustment(accountId, requestDTO.getAmount());
         return ResponseEntity.noContent().build();
     }
