@@ -7,7 +7,7 @@ import java.util.UUID;
 /**
  * This event is published whenever a credit limit is used (reservation/release/adjustment).
  */
-public class LimitUsageUpdatedEvent {
+public class LimitEvent {
 
     private UUID accountId;
     private BigDecimal amount;
@@ -17,12 +17,13 @@ public class LimitUsageUpdatedEvent {
     public enum OperationType {
         RESERVE,
         RELEASE,
-        ADJUSTMENT
+        ADJUSTMENT,
+        CREATED
     }
 
-    public LimitUsageUpdatedEvent() {}
+    public LimitEvent() {}
 
-    public LimitUsageUpdatedEvent(UUID accountId, BigDecimal amount, OperationType operationType) {
+    public LimitEvent(UUID accountId, BigDecimal amount, OperationType operationType) {
         this.accountId = accountId;
         this.amount = amount;
         this.operationType = operationType;
