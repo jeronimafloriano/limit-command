@@ -11,10 +11,14 @@ import com.limitcommand.infrastructure.events.publisher.LimitEvent.OperationType
 import com.limitcommand.infrastructure.events.publisher.UsageLimitEventPublisherPort;
 import java.math.BigDecimal;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LimitServiceImpl implements LimitServicePort {
+
+    private static final Logger log = LoggerFactory.getLogger(LimitServiceImpl.class);
 
     private final LimitRepositoryPort limitRepositoryPort;
     private final UsageLimitEventPublisherPort eventPublisherPort;
@@ -89,5 +93,6 @@ public class LimitServiceImpl implements LimitServicePort {
     private void publishEvent(UUID accountId, BigDecimal amount, OperationType operationType) {
         LimitEvent event = new LimitEvent(accountId, amount, operationType);
         this.eventPublisherPort.publishLimitEvent(event);
+        log.info("Published limit event for accountId: {}", accountId);
     }
 }
