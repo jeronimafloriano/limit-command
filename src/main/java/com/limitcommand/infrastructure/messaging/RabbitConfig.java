@@ -14,11 +14,22 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfig {
 
-    public static final String LIMIT_USAGE_EXCHANGE = "limitUsageExchange";
+    // Exchange principal
+    public static final String LIMIT_EXCHANGE = "limitExchange";
+
+    // Filas principais
     public static final String LIMIT_CREATED_QUEUE = "limit-created";
     public static final String LIMIT_USAGE_UPDATED_QUEUE = "limit-usage-updated";
-    public static final String LIMIT_USAGE_UPDATED_ROUTING = "limit.usage.updated";
+
+    // Routing keys
     public static final String LIMIT_CREATED_ROUTING = "limit.created";
+    public static final String LIMIT_USAGE_UPDATED_ROUTING = "limit.usage.updated";
+
+    // DLX
+    public static final String LIMIT_DLX = "limit.dlx";
+    public static final String LIMIT_CREATED_DLQ = "limit-created.dlq";
+
+    // ---------- Infra básica ----------
 
     @Bean
     public JacksonJsonMessageConverter jackson2JsonMessageConverter() {
@@ -28,14 +39,33 @@ public class RabbitConfig {
     @Bean
     public RabbitTemplate rabbitTemplate(
             ConnectionFactory connectionFactory, JacksonJsonMessageConverter messageConverter) {
+
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(messageConverter);
         return rabbitTemplate;
     }
 
+    // ---------- Exchanges ----------
+
+    @Bean
+    public TopicExchange limitUsageExchange() {
+        return new TopicExchange(LIMIT_EXCHANGE);
+    }
+
+    @Bean
+    public TopicExchange deadLetterExchange() {
+        return new TopicExchange(LIMIT_DLX);
+    }
+
+    // ---------- Filas ----------
+
     @Bean
     public Queue limitCreatedQueue() {
-        return QueueBuilder.durable(LIMIT_CREATED_QUEUE).build();
+        return QueueBuilder.durable(LIMIT_CREATED_QUEUE)
+                .ttl(60000) // 60 segundos
+                .deadLetterExchange(LIMIT_DLX)
+                .deadLetterRoutingKey("limit.created.expired")
+                .build();
     }
 
     @Bean
@@ -44,19 +74,28 @@ public class RabbitConfig {
     }
 
     @Bean
-    public TopicExchange limitUsageExchange() {
-        return new TopicExchange(LIMIT_USAGE_EXCHANGE);
+    public Queue limitCreatedDeadLetterQueue() {
+        return QueueBuilder.durable(LIMIT_CREATED_DLQ).build();
+    }
+
+    // ---------- Bindings ----------
+
+    @Bean
+    public Binding limitCreatedBinding() {
+        return BindingBuilder.bind(limitCreatedQueue()).to(limitUsageExchange()).with(LIMIT_CREATED_ROUTING);
     }
 
     @Bean
-    public Binding limitUsageUpdateBinding() {
+    public Binding limitUsageUpdatedBinding() {
         return BindingBuilder.bind(limitUsageUpdatedQueue())
                 .to(limitUsageExchange())
                 .with(LIMIT_USAGE_UPDATED_ROUTING);
     }
 
     @Bean
-    public Binding limitUsageCreatedBinding() {
-        return BindingBuilder.bind(limitCreatedQueue()).to(limitUsageExchange()).with(LIMIT_CREATED_ROUTING);
+    public Binding deadLetterBinding() {
+        return BindingBuilder.bind(limitCreatedDeadLetterQueue())
+                .to(deadLetterExchange())
+                .with("#"); // qualquer routing key
     }
 }
