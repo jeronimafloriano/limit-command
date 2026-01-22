@@ -1,7 +1,7 @@
 package com.limitcommand.infrastructure.events.publisher;
 
 import static com.limitcommand.infrastructure.messaging.RabbitConfig.LIMIT_CREATED_ROUTING;
-import static com.limitcommand.infrastructure.messaging.RabbitConfig.LIMIT_USAGE_EXCHANGE;
+import static com.limitcommand.infrastructure.messaging.RabbitConfig.LIMIT_EXCHANGE;
 import static com.limitcommand.infrastructure.messaging.RabbitConfig.LIMIT_USAGE_UPDATED_ROUTING;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -26,10 +26,10 @@ public class UsageLimitEventPublisher implements UsageLimitEventPublisherPort {
     }
 
     private void publishLimitUsageUpdated(LimitEvent event) {
-        rabbitTemplate.convertAndSend(LIMIT_USAGE_EXCHANGE, LIMIT_USAGE_UPDATED_ROUTING, event);
+        rabbitTemplate.convertAndSend(LIMIT_EXCHANGE, LIMIT_USAGE_UPDATED_ROUTING, event);
     }
 
     private void publishLimitCreated(LimitEvent event) {
-        rabbitTemplate.convertAndSend(LIMIT_USAGE_EXCHANGE, LIMIT_CREATED_ROUTING, event);
+        rabbitTemplate.convertAndSend(LIMIT_EXCHANGE, LIMIT_CREATED_ROUTING, event);
     }
 }

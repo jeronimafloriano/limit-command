@@ -47,7 +47,7 @@ public class LimitController {
     public ResponseEntity<LimitResponseDTO> create(
             @PathVariable("accountId") UUID accountId, @Valid @RequestBody LimitRequestDTO requestDTO) {
         Limit limit = limitServicePort.create(accountId, requestDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(limitMapper.toDTO(limit));
+        return ResponseEntity.status(HttpStatus.CREATED).body(limitMapper.toDTO(limit));
     }
 
     @PostMapping("/{accountId}/reserve")
