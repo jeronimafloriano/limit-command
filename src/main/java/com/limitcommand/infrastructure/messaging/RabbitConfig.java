@@ -48,7 +48,7 @@ public class RabbitConfig {
     // ---------- Exchanges ----------
 
     @Bean
-    public TopicExchange limitUsageExchange() {
+    public TopicExchange limitExchange() {
         return new TopicExchange(LIMIT_EXCHANGE);
     }
 
@@ -82,14 +82,12 @@ public class RabbitConfig {
 
     @Bean
     public Binding limitCreatedBinding() {
-        return BindingBuilder.bind(limitCreatedQueue()).to(limitUsageExchange()).with(LIMIT_CREATED_ROUTING);
+        return BindingBuilder.bind(limitCreatedQueue()).to(limitExchange()).with(LIMIT_CREATED_ROUTING);
     }
 
     @Bean
     public Binding limitUsageUpdatedBinding() {
-        return BindingBuilder.bind(limitUsageUpdatedQueue())
-                .to(limitUsageExchange())
-                .with(LIMIT_USAGE_UPDATED_ROUTING);
+        return BindingBuilder.bind(limitUsageUpdatedQueue()).to(limitExchange()).with(LIMIT_USAGE_UPDATED_ROUTING);
     }
 
     @Bean
